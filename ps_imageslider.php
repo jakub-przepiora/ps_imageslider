@@ -575,6 +575,11 @@ class Ps_ImageSlider extends Module implements WidgetInterface
 
     protected function updateUrl($link)
     {
+        // Empty link.
+        if (empty($link) || $link === '#') {
+            return $link;
+        }
+
         if (substr($link, 0, 7) !== 'http://' && substr($link, 0, 8) !== 'https://') {
             $link = 'http://' . $link;
         }
