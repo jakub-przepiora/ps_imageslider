@@ -575,7 +575,7 @@ class Ps_ImageSlider extends Module implements WidgetInterface
 
     protected function updateUrl($link)
     {
-        // Empty link.
+        // Empty or anchor link.
         if (empty($link) || 0 === strpos($link, '#')) {
             return $link;
         }
