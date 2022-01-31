@@ -3,5 +3,4 @@ includes:
 
 parameters:
   ignoreErrors:
-    - '#Access to protected property HelperForm\:\:\$fields_form.#'
     - '#Call to method assign\(\) on an unknown class Smarty_Data.#'

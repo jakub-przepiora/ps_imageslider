@@ -1,6 +1,2 @@
 includes:
     - %currentWorkingDirectory%/tests/phpstan/phpstan.neon
-
-parameters:
-  ignoreErrors:
-    - '#Access to protected property HelperForm\:\:\$fields_form.#'
