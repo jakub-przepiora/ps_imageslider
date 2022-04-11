@@ -58,7 +58,7 @@ class Ps_ImageSlider extends Module implements WidgetInterface
     {
         $this->name = 'ps_imageslider';
         $this->tab = 'front_office_features';
-        $this->version = '3.1.0';
+        $this->version = '3.1.1';
         $this->author = 'PrestaShop';
         $this->need_instance = 0;
         $this->secure_key = Tools::encrypt($this->name);
