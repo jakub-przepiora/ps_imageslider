@@ -44,7 +44,6 @@ include_once __DIR__ . '/Ps_HomeSlide.php';
 class Ps_ImageSlider extends Module implements WidgetInterface
 {
     protected $_html = '';
-    protected $default_width = 779;
     protected $default_speed = 5000;
     protected $default_pause_on_hover = 1;
     protected $default_wrap = 1;
@@ -973,10 +972,22 @@ class Ps_ImageSlider extends Module implements WidgetInterface
 
         foreach ($languages as $lang) {
             $fields['image'][$lang['id_lang']] = Tools::getValue('image_' . (int) $lang['id_lang']);
-            $fields['title'][$lang['id_lang']] = Tools::getValue('title_' . (int) $lang['id_lang'], $slide->title[$lang['id_lang']]);
-            $fields['url'][$lang['id_lang']] = Tools::getValue('url_' . (int) $lang['id_lang'], $slide->url[$lang['id_lang']]);
-            $fields['legend'][$lang['id_lang']] = Tools::getValue('legend_' . (int) $lang['id_lang'], $slide->legend[$lang['id_lang']]);
-            $fields['description'][$lang['id_lang']] = Tools::getValue('description_' . (int) $lang['id_lang'], $slide->description[$lang['id_lang']]);
+            $fields['title'][$lang['id_lang']] = Tools::getValue(
+                'title_' . (int) $lang['id_lang'],
+                isset($slide->title[$lang['id_lang']]) ? $slide->title[$lang['id_lang']] : ''
+            );
+            $fields['url'][$lang['id_lang']] = Tools::getValue(
+                'url_' . (int) $lang['id_lang'],
+                isset($slide->url[$lang['id_lang']]) ? $slide->url[$lang['id_lang']] : ''
+            );
+            $fields['legend'][$lang['id_lang']] = Tools::getValue(
+                'legend_' . (int) $lang['id_lang'],
+                isset($slide->legend[$lang['id_lang']]) ? $slide->legend[$lang['id_lang']] : ''
+            );
+            $fields['description'][$lang['id_lang']] = Tools::getValue(
+                'description_' . (int) $lang['id_lang'],
+                isset($slide->description[$lang['id_lang']]) ? $slide->description[$lang['id_lang']] : ''
+            );
         }
 
         return $fields;

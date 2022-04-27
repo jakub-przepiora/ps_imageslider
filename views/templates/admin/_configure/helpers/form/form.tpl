@@ -32,7 +32,7 @@
 					{if $languages|count > 1}
 						<div class="translatable-field lang-{$language.id_lang}" {if $language.id_lang != $defaultFormLanguage}style="display:none"{/if}>
 					{/if}
-						<div class="col-lg-9">
+						<div class="col-lg-{if $languages|count > 1}10{else}12{/if}">
 							{if isset($fields[0]['form']['images'])}
 							<img src="{$image_baseurl}{$fields[0]['form']['images'][$language.id_lang]}" class="img-thumbnail" />
 							{/if}
@@ -74,7 +74,7 @@
 							$('#{$input.name}_{$language.id_lang}-name').val(file[file.length-1]);
 						});
 					});
-				</script>
+				  </script>
 				{/foreach}
 			</div>
 		</div>
