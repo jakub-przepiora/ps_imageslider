@@ -147,7 +147,7 @@ class Ps_ImageSlider extends Module implements WidgetInterface
                 $slide->description[$language['id_lang']] = '<h3>EXCEPTEUR OCCAECAT</h3>
                 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin tristique in tortor et dignissim. Quisque non tempor leo. Maecenas egestas sem elit</p>';
                 $slide->legend[$language['id_lang']] = 'sample-' . $i;
-                $slide->url[$language['id_lang']] = 'http://www.prestashop.com/?utm_source=back-office&utm_medium=v17_homeslider'
+                $slide->url[$language['id_lang']] = 'https://www.prestashop-project.org?utm_source=back-office&utm_medium=v17_homeslider'
                     . '&utm_campaign=back-office-' . Tools::strtoupper($this->context->language->iso_code)
                     . '&utm_content=' . (defined('_PS_HOST_MODE_') ? 'ondemand' : 'download');
                 $rtlSuffix = $language['is_rtl'] ? '_rtl' : '';
