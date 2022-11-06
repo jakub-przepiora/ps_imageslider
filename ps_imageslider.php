@@ -612,19 +612,18 @@ class Ps_ImageSlider extends Module implements WidgetInterface
             return;
         }
 
-        $this->context->controller->addJqueryUI('ui.sortable');
+        $this->context->controller->addJS(_PS_JS_DIR_ . 'vendor/Sortable.min.js');
         /* Style & js for fieldset 'slides configuration' */
         $html = '<script type="text/javascript">
-            $(function() {
-                var $mySlides = $("#slides");
-                $mySlides.sortable({
-                    opacity: 0.6,
-                    cursor: "move",
-                    update: function() {
-                        var order = $(this).sortable("serialize") + "&action=updateSlidesPosition";
-                        $.post("' . $this->context->shop->physical_uri . $this->context->shop->virtual_uri . 'modules/' . $this->name . '/ajax_' . $this->name . '.php?secure_key=' . $this->secure_key . '", order);
-                        }
-                    });
+              $(function() {
+                var $mySlides = $("#slides");                
+                new Sortable($mySlides[0], {            
+                  animation: 150,        
+                  onUpdate: function(event) {
+                    var order = this.toArray().join("&") + "&action=updateSlidesPosition";
+                    $.post("' . $this->context->shop->physical_uri . $this->context->shop->virtual_uri . 'modules/' . $this->name . '/ajax_' . $this->name . '.php?secure_key=' . $this->secure_key . '", order);
+                  }
+                });
                 $mySlides.hover(function() {
                     $(this).css("cursor","move");
                     },
