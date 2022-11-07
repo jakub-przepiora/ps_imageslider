@@ -612,7 +612,7 @@ class Ps_ImageSlider extends Module implements WidgetInterface
             return;
         }
 
-        $this->context->controller->addJS(_PS_JS_DIR_ . 'vendor/Sortable.min.js');
+        $this->context->controller->addJS($this->_path . 'js/Sortable.min.js');
         /* Style & js for fieldset 'slides configuration' */
         $html = '<script type="text/javascript">
               $(function() {
