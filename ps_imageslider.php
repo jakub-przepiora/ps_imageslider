@@ -1,4 +1,5 @@
 <?php
+
 /**
  * 2007-2020 PrestaShop.
  *
@@ -78,7 +79,8 @@ class Ps_ImageSlider extends Module implements WidgetInterface
     public function install()
     {
         /* Adds Module */
-        if (parent::install() &&
+        if (
+            parent::install() &&
             $this->registerHook('displayHeader') &&
             $this->registerHook('displayHome') &&
             $this->registerHook('actionShopDataDuplication')
@@ -240,7 +242,9 @@ class Ps_ImageSlider extends Module implements WidgetInterface
         $this->_html .= $this->headerHTML();
 
         /* Validate & process */
-        if (Tools::isSubmit('submitSlide') || Tools::isSubmit('delete_id_slide') ||
+        if (
+            Tools::isSubmit('submitSlide') ||
+            Tools::isSubmit('delete_id_slide') ||
             Tools::isSubmit('submitSlider') ||
             Tools::isSubmit('changeStatus')
         ) {
@@ -466,17 +470,20 @@ class Ps_ImageSlider extends Module implements WidgetInterface
                 $type = '';
                 $imagesize = 0;
 
-                if (isset($_FILES['image_' . $language['id_lang']]) &&
+                if (
+                    isset($_FILES['image_' . $language['id_lang']]) &&
                     !empty($_FILES['image_' . $language['id_lang']]['tmp_name'])
                 ) {
                     $type = Tools::strtolower(Tools::substr(strrchr($_FILES['image_' . $language['id_lang']]['name'], '.'), 1));
                     $imagesize = @getimagesize($_FILES['image_' . $language['id_lang']]['tmp_name']);
                 }
 
-                if (!empty($type) &&
+                if (
+                    !empty($type) &&
                     !empty($imagesize) &&
                     in_array(
-                        Tools::strtolower(Tools::substr(strrchr($imagesize['mime'], '/'), 1)), [
+                        Tools::strtolower(Tools::substr(strrchr($imagesize['mime'], '/'), 1)),
+                        [
                             'jpg',
                             'gif',
                             'jpeg',
@@ -583,8 +590,9 @@ class Ps_ImageSlider extends Module implements WidgetInterface
             return $link;
         }
 
-        if (substr($link, 0, 7) !== 'http://' && substr($link, 0, 8) !== 'https://') {
-            $link = 'http://' . $link;
+        $url = parse_url($link);
+        if (empty($url['host'])) {
+            $link = $this->context->link->getBaseLink() . ltrim($link, '/');
         }
 
         return $link;
@@ -597,8 +605,8 @@ class Ps_ImageSlider extends Module implements WidgetInterface
 
     public function hookActionShopDataDuplication($params)
     {
-        Db::getInstance()->execute('
-            INSERT IGNORE INTO ' . _DB_PREFIX_ . 'homeslider (id_homeslider_slides, id_shop)
+        Db::getInstance()->execute(
+            'INSERT IGNORE INTO ' . _DB_PREFIX_ . 'homeslider (id_homeslider_slides, id_shop)
             SELECT id_homeslider_slides, ' . (int) $params['new_id_shop'] . '
             FROM ' . _DB_PREFIX_ . 'homeslider
             WHERE id_shop = ' . (int) $params['old_id_shop']
@@ -616,9 +624,9 @@ class Ps_ImageSlider extends Module implements WidgetInterface
         /* Style & js for fieldset 'slides configuration' */
         $html = '<script type="text/javascript">
               $(function() {
-                var $mySlides = $("#slides");                
-                new Sortable($mySlides[0], {            
-                  animation: 150,        
+                var $mySlides = $("#slides");
+                new Sortable($mySlides[0], {
+                  animation: 150,
                   onUpdate: function(event) {
                     var order = this.toArray().join("&") + "&action=updateSlidesPosition";
                     $.post("' . $this->context->shop->physical_uri . $this->context->shop->virtual_uri . 'modules/' . $this->name . '/ajax_' . $this->name . '.php?secure_key=' . $this->secure_key . '", order);
@@ -638,8 +646,8 @@ class Ps_ImageSlider extends Module implements WidgetInterface
 
     public function getNextPosition()
     {
-        $row = Db::getInstance((bool) _PS_USE_SQL_SLAVE_)->getRow('
-            SELECT MAX(hss.`position`) AS `next_position`
+        $row = Db::getInstance((bool) _PS_USE_SQL_SLAVE_)->getRow(
+            'SELECT MAX(hss.`position`) AS `next_position`
             FROM `' . _DB_PREFIX_ . 'homeslider_slides` hss, `' . _DB_PREFIX_ . 'homeslider` hs
             WHERE hss.`id_homeslider_slides` = hs.`id_homeslider_slides` AND hs.`id_shop` = ' . (int) $this->context->shop->id
         );
@@ -653,8 +661,8 @@ class Ps_ImageSlider extends Module implements WidgetInterface
         $id_shop = $this->context->shop->id;
         $id_lang = $this->context->language->id;
 
-        $slides = Db::getInstance((bool) _PS_USE_SQL_SLAVE_)->executeS('
-            SELECT hs.`id_homeslider_slides` as id_slide, hss.`position`, hss.`active`, hssl.`title`,
+        $slides = Db::getInstance((bool) _PS_USE_SQL_SLAVE_)->executeS(
+            'SELECT hs.`id_homeslider_slides` as id_slide, hss.`position`, hss.`active`, hssl.`title`,
             hssl.`url`, hssl.`legend`, hssl.`description`, hssl.`image`
             FROM ' . _DB_PREFIX_ . 'homeslider hs
             LEFT JOIN ' . _DB_PREFIX_ . 'homeslider_slides hss ON (hs.id_homeslider_slides = hss.id_homeslider_slides)
@@ -683,8 +691,8 @@ class Ps_ImageSlider extends Module implements WidgetInterface
             $id_shop = $this->context->shop->id;
         }
 
-        $results = Db::getInstance((bool) _PS_USE_SQL_SLAVE_)->executeS('
-            SELECT hssl.`image`, hssl.`id_lang`
+        $results = Db::getInstance((bool) _PS_USE_SQL_SLAVE_)->executeS(
+            'SELECT hssl.`image`, hssl.`id_lang`
             FROM ' . _DB_PREFIX_ . 'homeslider hs
             LEFT JOIN ' . _DB_PREFIX_ . 'homeslider_slides hss ON (hs.id_homeslider_slides = hss.id_homeslider_slides)
             LEFT JOIN ' . _DB_PREFIX_ . 'homeslider_slides_lang hssl ON (hss.id_homeslider_slides = hssl.id_homeslider_slides)
@@ -706,8 +714,8 @@ class Ps_ImageSlider extends Module implements WidgetInterface
         $class = ((int) $active == 0 ? 'btn-danger' : 'btn-success');
         $html = '<a class="btn ' . $class . '" href="' . AdminController::$currentIndex .
             '&configure=' . $this->name .
-                '&token=' . Tools::getAdminTokenLite('AdminModules') .
-                '&changeStatus&id_slide=' . (int) $id_slide . '" title="' . $title . '"><i class="' . $icon . '"></i> ' . $title . '</a>';
+            '&token=' . Tools::getAdminTokenLite('AdminModules') .
+            '&changeStatus&id_slide=' . (int) $id_slide . '" title="' . $title . '"><i class="' . $icon . '"></i> ' . $title . '</a>';
 
         return $html;
     }
@@ -999,16 +1007,16 @@ class Ps_ImageSlider extends Module implements WidgetInterface
     protected function getMultiLanguageInfoMsg()
     {
         return '<p class="alert alert-warning">' .
-                    $this->trans('Since multiple languages are activated on your shop, please mind to upload your image for each one of them', [], 'Modules.Imageslider.Admin') .
-                '</p>';
+            $this->trans('Since multiple languages are activated on your shop, please mind to upload your image for each one of them', [], 'Modules.Imageslider.Admin') .
+            '</p>';
     }
 
     protected function getWarningMultishopHtml()
     {
         if (Shop::getContext() == Shop::CONTEXT_GROUP || Shop::getContext() == Shop::CONTEXT_ALL) {
             return '<p class="alert alert-warning">' .
-            $this->trans('You cannot manage slides items from a "All Shops" or a "Group Shop" context, select directly the shop you want to edit', [], 'Modules.Imageslider.Admin') .
-            '</p>';
+                $this->trans('You cannot manage slides items from a "All Shops" or a "Group Shop" context, select directly the shop you want to edit', [], 'Modules.Imageslider.Admin') .
+                '</p>';
         } else {
             return '';
         }
@@ -1022,20 +1030,20 @@ class Ps_ImageSlider extends Module implements WidgetInterface
 
         if ($mode == 'edit') {
             return '<p class="alert alert-danger">' .
-            $this->trans('You can only edit this slide from the shop(s) context: %s', [$shop_contextualized_name], 'Modules.Imageslider.Admin') .
-            '</p>';
+                $this->trans('You can only edit this slide from the shop(s) context: %s', [$shop_contextualized_name], 'Modules.Imageslider.Admin') .
+                '</p>';
         } else {
             return '<p class="alert alert-danger">' .
-            $this->trans('You cannot add slides from a "All Shops" or a "Group Shop" context', [], 'Modules.Imageslider.Admin') .
-            '</p>';
+                $this->trans('You cannot add slides from a "All Shops" or a "Group Shop" context', [], 'Modules.Imageslider.Admin') .
+                '</p>';
         }
     }
 
     protected function getShopAssociationError($id_slide)
     {
         return '<p class="alert alert-danger">' .
-                        $this->trans('Unable to get slide shop association information (id_slide: %d)', [(int) $id_slide], 'Modules.Imageslider.Admin') .
-                '</p>';
+            $this->trans('Unable to get slide shop association information (id_slide: %d)', [(int) $id_slide], 'Modules.Imageslider.Admin') .
+            '</p>';
     }
 
     protected function getCurrentShopInfoMsg()
@@ -1051,9 +1059,7 @@ class Ps_ImageSlider extends Module implements WidgetInterface
                 $shop_info = $this->trans('The modifications will be applied to all shops and shop groups', [], 'Modules.Imageslider.Admin');
             }
 
-            return '<div class="alert alert-info">' .
-                        $shop_info .
-                    '</div>';
+            return '<div class="alert alert-info">' . $shop_info . '</div>';
         } else {
             return '';
         }
@@ -1062,7 +1068,7 @@ class Ps_ImageSlider extends Module implements WidgetInterface
     protected function getSharedSlideWarning()
     {
         return '<p class="alert alert-warning">' .
-                    $this->trans('This slide is shared with other shops! All shops associated to this slide will apply modifications made here', [], 'Modules.Imageslider.Admin') .
-                '</p>';
+            $this->trans('This slide is shared with other shops! All shops associated to this slide will apply modifications made here', [], 'Modules.Imageslider.Admin') .
+            '</p>';
     }
 }
