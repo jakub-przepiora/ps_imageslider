@@ -583,16 +583,24 @@ class Ps_ImageSlider extends Module implements WidgetInterface
         ];
     }
 
-    protected function updateUrl($link)
+    protected function validateUrl($link)
     {
         // Empty or anchor link.
         if (empty($link) || 0 === strpos($link, '#')) {
             return $link;
         }
 
-        $url = parse_url($link);
-        if (empty($url['host'])) {
-            $link = $this->context->link->getBaseLink() . ltrim($link, '/');
+        $host = parse_url($link, PHP_URL_HOST);
+        // links starting with http://, https:// or // have $host determined, the rest needs more validation
+        if (empty($host)) {
+            if (preg_match('/^(?!\-|index\.php)(?:(?:[a-z\d][a-z\d\-]{0,61})?[a-z\d]\.){1,126}(?!\d+)[a-z\d]{1,63}/i', $link)) {
+                // handle strings considered to be domain names without protocol eg. 'prestashop.com', excluding 'index.php'
+                // ref. https://stackoverflow.com/a/16491074/6389945
+                $link = '//' . $link;
+            } else {
+                // consider other links shop internal and add shop domain in front
+                $link = $this->context->link->getBaseLink() . ltrim($link, '/');
+            }
         }
 
         return $link;
@@ -676,7 +684,7 @@ class Ps_ImageSlider extends Module implements WidgetInterface
 
         foreach ($slides as &$slide) {
             $slide['image_url'] = $this->context->link->getMediaLink(_MODULE_DIR_ . 'ps_imageslider/images/' . $slide['image']);
-            $slide['url'] = $this->updateUrl($slide['url']);
+            $slide['url'] = $this->validateUrl($slide['url']);
         }
 
         return $slides;
